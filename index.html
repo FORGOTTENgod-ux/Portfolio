@@ -1168,9 +1168,9 @@
     <div class="contact-info reveal">
       <p>Available for cybersecurity internships, freelance VAPT engagements, and bug bounty collaborations. Based in Ludhiana — working remotely worldwide.</p>
       <div class="contact-links">
-        <a href="/cdn-cgi/l/email-protection#5f3e312c372c303136713c263d3a2d1f38323e3633713c3032" class="contact-link">
+        <a href="#" class="contact-link" id="email-link">
           <span class="contact-link-icon">✉</span>
-          <span class="__cf_email__" data-cfemail="45242b362d362a2b2c6b263c272037052228242c296b262a28">[email&#160;protected]</span>
+          <span id="email-display"></span>
         </a>
         <a href="tel:+918699622343" class="contact-link">
           <span class="contact-link-icon">◈</span>
@@ -1211,7 +1211,7 @@
   <img id="lightboxImg" src="" alt=""/>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
   // Cursor
   const cursor = document.getElementById('cursor');
   const dot = document.getElementById('cursorDot');
@@ -1329,6 +1329,19 @@
     document.getElementById('lightbox').classList.remove('open');
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+  // Assemble email at runtime — bypasses Cloudflare email protection
+  (function() {
+    const u = 'anshsoni.cyber';
+    const d = 'gmail' + '.com';
+    const email = u + '@' + d;
+    const link = document.getElementById('email-link');
+    const display = document.getElementById('email-display');
+    if (link && display) {
+      link.href = 'mailto:' + email;
+      display.textContent = email;
+    }
+  })();
 </script>
 </body>
 </html>

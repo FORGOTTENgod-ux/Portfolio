@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ansh Soni — Cybersecurity</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #020c07;
+    --bg2: #040f09;
+    --green: #00ff41;
+    --cyan: #00e5ff;
+    --dim: #00b32c;
+    --dimmer: #005c16;
+    --red: #ff003c;
+    --text: #c8ffd4;
+    --muted: #4a7a55;
+    --grid: rgba(0,255,65,0.04);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 24px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    position: fixed;
+    width: 20px; height: 20px;
+    border: 1px solid var(--green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, border-color 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-dot {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: var(--green);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+  }
+  body:hover .cursor { opacity: 1; }
+
+  /* SCANLINES */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.07) 2px,
+      rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 9000;
+  }
+
+  /* GRID BACKGROUND */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 60px;
+    background: rgba(2,12,7,0.92);
+    border-bottom: 1px solid rgba(0,255,65,0.15);
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-decoration: none;
+  }
+
+  .nav-logo span { color: var(--cyan); }
+
+  nav ul { list-style: none; display: flex; gap: 40px; }
+  nav ul a {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    position: relative;
+  }
+  nav ul a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0;
+    width: 0; height: 1px;
+    background: var(--green);
+    transition: width 0.3s;
+  }
+  nav ul a:hover { color: var(--green); }
+  nav ul a:hover::after { width: 100%; }
+
+  /* SECTIONS */
+  section {
+    position: relative;
+    z-index: 1;
+    padding: 100px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 100%;
+    padding: 0 60px;
+  }
+
+  .hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  .hero-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--dim);
+    letter-spacing: 4px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s forwards;
+  }
+
+  .hero-name {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--green);
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.5s forwards;
+    text-shadow: 0 0 40px rgba(0,255,65,0.3);
+  }
+
+  .glitch {
+    position: relative;
+    display: inline-block;
+  }
+  .glitch::before, .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .glitch::before {
+    color: var(--cyan);
+    animation: glitch1 4s infinite;
+    clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    transform: translateX(-2px);
+  }
+  .glitch::after {
+    color: var(--red);
+    animation: glitch2 4s infinite;
+    clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    transform: translateX(2px);
+  }
+
+  @keyframes glitch1 {
+    0%, 90%, 100% { transform: translateX(0); opacity: 0; }
+    91% { transform: translateX(-4px); opacity: 1; }
+    93% { transform: translateX(4px); opacity: 1; }
+    95% { transform: translateX(-2px); opacity: 1; }
+    97% { transform: translateX(0); opacity: 0; }
+  }
+  @keyframes glitch2 {
+    0%, 88%, 100% { transform: translateX(0); opacity: 0; }
+    89% { transform: translateX(4px); opacity: 1; }
+    91% { transform: translateX(-4px); opacity: 1; }
+    93% { transform: translateX(2px); opacity: 1; }
+    95% { transform: translateX(0); opacity: 0; }
+  }
+
+  .hero-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: clamp(14px, 2vw, 20px);
+    color: var(--cyan);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.7s forwards;
+    min-height: 30px;
+  }
+
+  .hero-desc {
+    font-size: 24px;
+    color: var(--muted);
+    max-width: 600px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.9s forwards;
+    font-weight: 300;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeUp 0.7s 1.1s forwards;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 14px 32px;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid var(--green);
+    color: var(--green);
+    background: transparent;
+    cursor: none;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s;
+  }
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--green);
+    transform: translateX(-101%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: -1;
+  }
+  .btn:hover { color: var(--bg); }
+  .btn:hover::before { transform: translateX(0); }
+
+  .btn-outline {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+  .btn-outline::before { background: var(--cyan); }
+
+  /* SECTION HEADER */
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+  .sec-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+  .sec-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .sec-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(0,255,65,0.4), transparent);
+  }
+
+  /* ABOUT */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    margin-bottom: 20px;
+    font-weight: 300;
+    font-size: 24px;
+  }
+
+  .about-text p strong { color: var(--text); font-weight: 600; }
+
+  .terminal-box {
+    background: rgba(0,255,65,0.03);
+    border: 1px solid rgba(0,255,65,0.2);
+    padding: 28px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+  }
+
+  .terminal-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-red { background: #ff5f56; }
+  .t-yellow { background: #ffbd2e; }
+  .t-green { background: #27c93f; }
+  .t-title { color: var(--dimmer); font-size: 15px; letter-spacing: 2px; margin-left: 8px; }
+
+  .terminal-line { color: var(--muted); margin: 4px 0; }
+  .terminal-line .prompt { color: var(--green); }
+  .terminal-line .cmd { color: var(--cyan); }
+  .terminal-line .out { color: var(--text); }
+  .terminal-line .comment { color: var(--dimmer); }
+
+  .blink {
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* SKILLS */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .skill-cat {
+    background: rgba(0,255,65,0.02);
+    border: 1px solid rgba(0,255,65,0.1);
+    padding: 28px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .skill-cat:hover {
+    border-color: rgba(0,255,65,0.4);
+    background: rgba(0,255,65,0.05);
+  }
+
+  .skill-cat-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--cyan);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .skill-cat-title::before {
+    content: '//';
+    color: var(--dimmer);
+  }
+
+  .skill-tag {
+    display: inline-block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--dim);
+    border: 1px solid var(--dimmer);
+    padding: 4px 10px;
+    margin: 3px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .skill-tag:hover {
+    color: var(--green);
+    border-color: var(--green);
+  }
+
+  /* PROJECTS */
+  .projects-list { display: flex; flex-direction: column; gap: 2px; }
+
+  .project-card {
+    border: 1px solid rgba(0,255,65,0.12);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    background: rgba(0,255,65,0.01);
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--green);
+    transform: scaleY(0);
+    transition: transform 0.3s;
+    transform-origin: bottom;
+  }
+  .project-card:hover { border-color: rgba(0,255,65,0.35); }
+  .project-card:hover::before { transform: scaleY(1); }
+
+  .project-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--dimmer);
+    letter-spacing: 3px;
+    margin-bottom: 12px;
+  }
+
+  .project-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 24px;
+    color: var(--green);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .project-subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    font-size: 24px;
+    font-weight: 300;
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+
+  .project-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .project-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--dim);
+    background: rgba(0,255,65,0.06);
+    border: 1px solid rgba(0,255,65,0.2);
+    padding: 3px 10px;
+  }
+
+  /* CERTS */
+  .certs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2px;
+  }
+
+  .cert-card {
+    border: 1px solid rgba(0,255,65,0.1);
+    padding: 28px 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: border-color 0.3s, background 0.3s;
+    background: rgba(0,255,65,0.01);
+  }
+  .cert-card:hover {
+    border-color: rgba(0,229,255,0.4);
+    background: rgba(0,229,255,0.03);
+  }
+
+  .cert-icon {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 24px;
+    color: var(--cyan);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .cert-name {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .cert-issuer {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* CONTACT */
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .contact-info p {
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 40px;
+    font-size: 24px;
+  }
+
+  .contact-links { display: flex; flex-direction: column; gap: 16px; }
+  .contact-link {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 1px;
+  }
+  .contact-link:hover { color: var(--green); }
+  .contact-link-icon { color: var(--green); font-size: 24px; }
+
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .form-input, .form-textarea {
+    background: rgba(0,255,65,0.03);
+    border: 1px solid rgba(0,255,65,0.2);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    padding: 14px 16px;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+    cursor: none;
+  }
+  .form-input:focus, .form-textarea:focus {
+    border-color: var(--green);
+    background: rgba(0,255,65,0.05);
+  }
+  .form-textarea { height: 120px; }
+
+  .form-submit {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    letter-spacing: 2px;
+    padding: 16px;
+    border: 1px solid var(--green);
+    color: var(--green);
+    background: transparent;
+    cursor: none;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s;
+  }
+  .form-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--green);
+    transform: translateX(-101%);
+    transition: transform 0.3s;
+    z-index: -1;
+  }
+  .form-submit:hover { color: var(--bg); }
+  .form-submit:hover::before { transform: translateX(0); }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px;
+    border-top: 1px solid rgba(0,255,65,0.1);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--dimmer);
+    letter-spacing: 2px;
+  }
+
+  /* STATUS INDICATOR */
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--dim);
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--green); }
+    50% { opacity: 0.5; box-shadow: 0 0 20px var(--green); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s, transform 0.7s;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* NOISE OVERLAY */
+  .noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 8999;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* IMAGE STRIP */
+  .img-strip-wrapper {
+    margin-top: 28px;
+    position: relative;
+  }
+
+  .img-strip-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dimmer);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .img-strip {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dimmer) transparent;
+  }
+  .img-strip::-webkit-scrollbar { height: 3px; }
+  .img-strip::-webkit-scrollbar-track { background: transparent; }
+  .img-strip::-webkit-scrollbar-thumb { background: var(--dimmer); }
+
+  .img-frame {
+    flex-shrink: 0;
+    width: 280px;
+    height: 175px;
+    position: relative;
+    border: 1px solid rgba(0,255,65,0.2);
+    overflow: hidden;
+    cursor: none;
+    transition: border-color 0.3s;
+  }
+  .img-frame:hover { border-color: var(--cyan); }
+
+  /* Placeholder state */
+  .img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,255,65,0.03);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .img-placeholder-icon {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 32px;
+    color: var(--dimmer);
+  }
+  .img-placeholder-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    color: var(--dimmer);
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  /* Real image state */
+  .img-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    filter: saturate(0.7) brightness(0.85);
+    transition: filter 0.3s;
+  }
+  .img-frame:hover img { filter: saturate(1) brightness(1); }
+
+  /* Scanline overlay on each frame */
+  .img-frame::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(0,0,0,0.18) 3px,
+      rgba(0,0,0,0.18) 4px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* Glitch effect on hover */
+  .img-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      transparent 0%,
+      rgba(0,255,65,0.04) 50%,
+      transparent 100%
+    );
+    transform: translateY(-100%);
+    z-index: 3;
+    pointer-events: none;
+    transition: none;
+  }
+  .img-frame:hover::before {
+    animation: scanSweep 1.2s linear infinite;
+  }
+  @keyframes scanSweep {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  /* Glitch flicker on hover */
+  .img-frame:hover {
+    animation: imgGlitch 3s infinite;
+  }
+  @keyframes imgGlitch {
+    0%, 92%, 100% { transform: none; }
+    93% { transform: translateX(-2px) skewX(1deg); }
+    94% { transform: translateX(2px) skewX(-1deg); }
+    95% { transform: translateX(-1px); }
+    96% { transform: none; }
+  }
+
+  /* Corner brackets */
+  .img-frame .bracket-tl,
+  .img-frame .bracket-br {
+    position: absolute;
+    width: 14px; height: 14px;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .img-frame .bracket-tl {
+    top: 6px; left: 6px;
+    border-top: 1px solid var(--green);
+    border-left: 1px solid var(--green);
+  }
+  .img-frame .bracket-br {
+    bottom: 6px; right: 6px;
+    border-bottom: 1px solid var(--green);
+    border-right: 1px solid var(--green);
+  }
+
+  /* Lightbox */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2,12,7,0.96);
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+    cursor: none;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 85vh;
+    border: 1px solid rgba(0,255,65,0.3);
+    filter: saturate(0.85);
+    position: relative;
+    z-index: 2;
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 24px; right: 32px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    color: var(--green);
+    letter-spacing: 2px;
+    cursor: none;
+    z-index: 3;
+  }
+  .lightbox-close:hover { color: var(--red); }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    nav ul { gap: 20px; }
+    section { padding: 80px 24px; }
+    #hero { padding: 0 24px; }
+    .about-grid, .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .certs-grid { grid-template-columns: 1fr; }
+    .img-frame { width: 220px; height: 138px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="noise"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">AN<span>SH</span>.EXE</a>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#certs">Certs</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-inner">
+    <div class="status">
+      <div class="status-dot"></div>
+      AVAILABLE FOR INTERNSHIPS &amp; FREELANCE
+    </div>
+    <div class="hero-tag">// INITIALIZING PROFILE . . .</div>
+    <h1 class="hero-name">
+      <span class="glitch" data-text="ANSH SONI">ANSH SONI</span>
+    </h1>
+    <div class="hero-subtitle" id="typed"></div>
+    <p class="hero-desc">
+      Cybersecurity analyst & ethical hacker. Building tools that detect, defend, and disrupt threats before they land.
+    </p>
+    <div class="hero-buttons">
+      <a href="#projects" class="btn">View Projects</a>
+      <a href="#contact" class="btn btn-outline">Get In Touch</a>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="sec-header reveal">
+    <span class="sec-num">01</span>
+    <h2 class="sec-title">About</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>Final-year <strong>BCA student at PCTE Group of Institutes, Ludhiana</strong>, with a deep focus on cybersecurity, ethical hacking, and building security tooling from scratch.</p>
+      <p>I built <strong>SentinelX</strong> — a full-stack AI-based Intrusion Detection System that catches real attacks in real time using machine learning. That's not coursework. That's shipped code.</p>
+      <p>Currently pursuing an <strong>MCA in Germany</strong> to specialise deeper in cybersecurity. Looking for internships and freelance projects where I can do meaningful work.</p>
+    </div>
+    <div class="terminal-box reveal">
+      <div class="terminal-bar">
+        <div class="t-dot t-red"></div>
+        <div class="t-dot t-yellow"></div>
+        <div class="t-dot t-green"></div>
+        <span class="t-title">ansh@kali:~$</span>
+      </div>
+      <div class="terminal-line"><span class="prompt">❯ </span><span class="cmd">whoami</span></div>
+      <div class="terminal-line"><span class="out">ansh_soni // cybersec_analyst</span></div>
+      <div class="terminal-line"> </div>
+      <div class="terminal-line"><span class="prompt">❯ </span><span class="cmd">cat status.txt</span></div>
+      <div class="terminal-line"><span class="comment"># BCA Final Year — PCTE, Ludhiana</span></div>
+      <div class="terminal-line"><span class="comment"># Targeting MCA in Germany (CyberSec)</span></div>
+      <div class="terminal-line"><span class="comment"># Open to: internships, bug bounties</span></div>
+      <div class="terminal-line"> </div>
+      <div class="terminal-line"><span class="prompt">❯ </span><span class="cmd">ls skills/</span></div>
+      <div class="terminal-line"><span class="out">vapt/ wapt/ python/ ccna/ ml/</span></div>
+      <div class="terminal-line"> </div>
+      <div class="terminal-line"><span class="prompt">❯ </span><span class="blink">█</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="sec-header reveal">
+    <span class="sec-num">02</span>
+    <h2 class="sec-title">Skills & Tools</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-cat reveal">
+      <div class="skill-cat-title">Security</div>
+      <span class="skill-tag">VAPT</span><span class="skill-tag">WAPT</span><span class="skill-tag">NPT</span>
+      <span class="skill-tag">Ethical Hacking</span><span class="skill-tag">Burp Suite</span>
+      <span class="skill-tag">OWASP Top 10</span><span class="skill-tag">Metasploit</span>
+      <span class="skill-tag">nmap</span><span class="skill-tag">OSINT</span>
+    </div>
+    <div class="skill-cat reveal">
+      <div class="skill-cat-title">Networking</div>
+      <span class="skill-tag">CCNA</span><span class="skill-tag">Wireshark</span>
+      <span class="skill-tag">tshark</span><span class="skill-tag">hping3</span>
+      <span class="skill-tag">TCP/IP</span><span class="skill-tag">Subnetting</span>
+      <span class="skill-tag">Packet Analysis</span>
+    </div>
+    <div class="skill-cat reveal">
+      <div class="skill-cat-title">Programming</div>
+      <span class="skill-tag">Python</span><span class="skill-tag">Bash Scripting</span>
+      <span class="skill-tag">REST APIs</span><span class="skill-tag">JavaScript</span>
+      <span class="skill-tag">Flask</span><span class="skill-tag">Next.js</span>
+    </div>
+    <div class="skill-cat reveal">
+      <div class="skill-cat-title">Machine Learning</div>
+      <span class="skill-tag">Scikit-learn</span><span class="skill-tag">KNN</span>
+      <span class="skill-tag">Data Preprocessing</span><span class="skill-tag">Model Training</span>
+      <span class="skill-tag">Feature Engineering</span>
+    </div>
+    <div class="skill-cat reveal">
+      <div class="skill-cat-title">Platforms</div>
+      <span class="skill-tag">Kali Linux</span><span class="skill-tag">Ubuntu</span>
+      <span class="skill-tag">Windows</span><span class="skill-tag">MongoDB</span>
+      <span class="skill-tag">Git / GitHub</span>
+    </div>
+    <div class="skill-cat reveal">
+      <div class="skill-cat-title">Concepts</div>
+      <span class="skill-tag">IDS/IPS</span><span class="skill-tag">SQL Injection</span>
+      <span class="skill-tag">DoS / DDoS</span><span class="skill-tag">Cryptography</span>
+      <span class="skill-tag">System Hardening</span><span class="skill-tag">Dark Web</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="sec-header reveal">
+    <span class="sec-num">03</span>
+    <h2 class="sec-title">Projects</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="projects-list">
+
+    <div class="project-card reveal">
+      <div class="project-num">PROJECT_01 // FLAGSHIP</div>
+      <div class="project-title">SentinelX</div>
+      <div class="project-subtitle">AI-BASED INTRUSION DETECTION SYSTEM</div>
+      <p class="project-desc">
+        Full-stack IDS that detects 6 attack classes in real time — SYN Flood, ICMP Flood, Port Scan, Brute Force, SQL Injection, and Normal traffic. Built a complete pipeline: live packet capture with tshark → feature extraction → KNN classification → Flask API → MongoDB → live Next.js dashboard. Trained on ~279 samples across a controlled lab environment with real attack simulations.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">Python</span>
+        <span class="project-tag">Flask</span>
+        <span class="project-tag">MongoDB</span>
+        <span class="project-tag">Next.js</span>
+        <span class="project-tag">KNN / Scikit-learn</span>
+        <span class="project-tag">tshark</span>
+        <span class="project-tag">hping3</span>
+        <span class="project-tag">Machine Learning</span>
+      </div>
+
+      <!-- IMAGE STRIP — Replace src="YOUR_IMAGE_X.png" with your actual screenshot paths -->
+      <div class="img-strip-wrapper">
+        <div class="img-strip-label">// screenshots</div>
+        <div class="img-strip">
+
+          <!-- SLOT 1: Dashboard overview screenshot -->
+          <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <!-- <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">DASHBOARD_OVERVIEW.png</div>
+            </div> -->
+            <!-- When ready: remove the div.img-placeholder above and uncomment below -->
+            <img src="sentinelx_dashboard.png" alt="SentinelX Dashboard"/>
+          </div>
+
+          <!-- SLOT 2: Real-time alert feed -->
+          <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <!-- <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">ALERT_FEED.png</div>
+            </div> -->
+            <img src="sentinelx_alerts.png" alt="SentinelX Alert Feed"/>
+          </div>
+
+          <!-- SLOT 3: Detection engine / terminal output -->
+          <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <!-- <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">DETECTION_ENGINE.png</div>
+            </div> -->
+            <img src="sentinelx_engine.png" alt="Detection Engine Terminal"/>
+          </div>
+
+          <!-- SLOT 4: ML model accuracy / confusion matrix -->
+          <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <!-- <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">ML_MODEL_ACCURACY.png</div>
+            </div> -->
+            <img src="sentinelx_ml.png" alt="ML Model Accuracy"/>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="project-card reveal">
+      <div class="project-num">PROJECT_02</div>
+      <div class="project-title">Web Application Pentest Lab</div>
+      <div class="project-subtitle">VULNERABILITY ASSESSMENT &amp; EXPLOITATION</div>
+      <p class="project-desc">
+        Designed and deployed a deliberately vulnerable e-commerce web application for hands-on penetration testing practice. Conducted DDoS attack simulation, full vulnerability assessment, and SQL injection exploitation. Produced a structured security report documenting findings, attack vectors, and remediation recommendations.
+      </p>
+      <div class="project-tags">
+        <span class="project-tag">Burp Suite</span>
+        <span class="project-tag">SQL Injection</span>
+        <span class="project-tag">DDoS Simulation</span>
+        <span class="project-tag">VAPT</span>
+        <span class="project-tag">Security Reporting</span>
+      </div>
+
+      <!-- IMAGE STRIP — Replace src="YOUR_IMAGE_X.png" with your actual screenshot paths -->
+      <!-- <div class="img-strip-wrapper">
+        <div class="img-strip-label">// screenshots</div>
+        <div class="img-strip"> -->
+
+          <!-- SLOT 1: Burp Suite intercepting requests -->
+          <!-- <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">BURPSUITE_INTERCEPT.png</div>
+            </div> -->
+            <!-- <img src="pentest_burp.png" alt="Burp Suite Intercept"/> -->
+          <!-- </div> -->
+
+          <!-- SLOT 2: SQLi output / exploit result -->
+          <!-- <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">SQLI_EXPLOIT.png</div>
+            </div> -->
+            <!-- <img src="pentest_sqli.png" alt="SQL Injection Exploit"/> -->
+          <!-- </div> -->
+
+          <!-- SLOT 3: Vulnerability assessment report -->
+          <!-- <div class="img-frame" onclick="openLightbox(this)">
+            <div class="bracket-tl"></div>
+            <div class="bracket-br"></div>
+            <div class="img-placeholder">
+              <div class="img-placeholder-icon">[IMG]</div>
+              <div class="img-placeholder-text">VULN_REPORT.png</div>
+            </div> -->
+            <!-- <img src="pentest_report.png" alt="Vulnerability Report"/> -->
+          <!-- </div>
+
+        </div>
+      </div> -->
+    </div>
+
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section id="certs">
+  <div class="sec-header reveal">
+    <span class="sec-num">04</span>
+    <h2 class="sec-title">Certifications</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="certs-grid">
+    <div class="cert-card reveal">
+      <div class="cert-icon">[✓]</div>
+      <div>
+        <div class="cert-name">Cyber Security Internship</div>
+        <div class="cert-issuer">DUCAT EDUCATION</div>
+      </div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">[✓]</div>
+      <div>
+        <div class="cert-name">Introduction to Dark Web, Anonymity & Cryptocurrency</div>
+        <div class="cert-issuer">EC-COUNCIL</div>
+      </div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">[✓]</div>
+      <div>
+        <div class="cert-name">Complete IP Addressing & Subnetting</div>
+        <div class="cert-issuer">GEEKSFORGEEKS</div>
+      </div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">[✓]</div>
+      <div>
+        <div class="cert-name">Learn Ethical Hacking from Scratch</div>
+        <div class="cert-issuer">UDEMY — ZSECURITY</div>
+      </div>
+    </div>
+    <div class="cert-card reveal">
+      <div class="cert-icon">[✓]</div>
+      <div>
+        <div class="cert-name">Ethical Hacking</div>
+        <div class="cert-issuer">TUTEDUDE</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="sec-header reveal">
+    <span class="sec-num">05</span>
+    <h2 class="sec-title">Contact</h2>
+    <div class="sec-line"></div>
+  </div>
+  <div class="contact-inner">
+    <div class="contact-info reveal">
+      <p>Available for cybersecurity internships, freelance VAPT engagements, and bug bounty collaborations. Based in Ludhiana — working remotely worldwide.</p>
+      <div class="contact-links">
+        <a href="/cdn-cgi/l/email-protection#5f3e312c372c303136713c263d3a2d1f38323e3633713c3032" class="contact-link">
+          <span class="contact-link-icon">✉</span>
+          <span class="__cf_email__" data-cfemail="45242b362d362a2b2c6b263c272037052228242c296b262a28">[email&#160;protected]</span>
+        </a>
+        <a href="tel:+918699622343" class="contact-link">
+          <span class="contact-link-icon">◈</span>
+          +91 8699622343
+        </a>
+        <a href="#" class="contact-link">
+          <span class="contact-link-icon">◉</span>
+          Ludhiana, Punjab, India
+        </a>
+      </div>
+    </div>
+    <div class="contact-form reveal">
+      <div class="form-group">
+        <label class="form-label">Name</label>
+        <input type="text" id="form-name" class="form-input" placeholder="your_name"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="form-email" class="form-input" placeholder="your@email.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Message</label>
+        <textarea id="form-message" class="form-textarea" placeholder="describe your project or opportunity..."></textarea>
+      </div>
+      <button class="form-submit" id="form-btn" onclick="handleSubmit()">[ SEND MESSAGE ]</button>
+      <div id="form-status" style="font-family:'Share Tech Mono',monospace;font-size:12px;margin-top:12px;letter-spacing:2px;min-height:18px;"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  &copy; 2026 ANSH SONI // ALL SYSTEMS OPERATIONAL
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-close" onclick="closeLightbox()">[ CLOSE × ]</div>
+  <img id="lightboxImg" src="" alt=""/>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursorDot');
+  let mx = 0, my = 0, cx = 0, cy = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cx += (mx - cx) * 0.15;
+    cy += (my - cy) * 0.15;
+    cursor.style.left = cx + 'px';
+    cursor.style.top = cy + 'px';
+    dot.style.left = mx + 'px';
+    dot.style.top = my + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+  document.querySelectorAll('a, button, .btn, .skill-tag, .project-card, .cert-card').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width = '40px'; cursor.style.height = '40px'; cursor.style.borderColor = 'var(--cyan)'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width = '20px'; cursor.style.height = '20px'; cursor.style.borderColor = 'var(--green)'; });
+  });
+
+  // Typing effect
+  const phrases = [
+    'Penetration Tester_',
+    'IDS Developer_',
+    'Ethical Hacker_',
+    'Security Researcher_',
+  ];
+  let pi = 0, ci = 0, deleting = false;
+  const typedEl = document.getElementById('typed');
+  function type() {
+    const phrase = phrases[pi];
+    if (!deleting) {
+      typedEl.textContent = phrase.slice(0, ++ci);
+      if (ci === phrase.length) { deleting = true; setTimeout(type, 1800); return; }
+    } else {
+      typedEl.textContent = phrase.slice(0, --ci);
+      if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; }
+    }
+    setTimeout(type, deleting ? 40 : 80);
+  }
+  setTimeout(type, 1500);
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+
+  // Form — Formspree integration
+  async function handleSubmit() {
+    const name = document.getElementById('form-name').value.trim();
+    const email = document.getElementById('form-email').value.trim();
+    const message = document.getElementById('form-message').value.trim();
+    const btn = document.getElementById('form-btn');
+    const status = document.getElementById('form-status');
+
+    if (!name || !email || !message) {
+      status.style.color = 'var(--red)';
+      status.textContent = '[ ERROR: ALL FIELDS REQUIRED ]';
+      return;
+    }
+
+    btn.textContent = '[ TRANSMITTING... ]';
+    btn.disabled = true;
+    status.textContent = '';
+
+    try {
+      const res = await fetch('https://formspree.io/f/xkoqjdpp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({ name, email, message })
+      });
+
+      if (res.ok) {
+        btn.textContent = '[ TRANSMITTED ✓ ]';
+        btn.style.borderColor = 'var(--cyan)';
+        btn.style.color = 'var(--cyan)';
+        status.style.color = 'var(--dim)';
+        status.textContent = '// message delivered to anshsoni.cyber@gmail.com';
+        document.getElementById('form-name').value = '';
+        document.getElementById('form-email').value = '';
+        document.getElementById('form-message').value = '';
+        setTimeout(() => {
+          btn.textContent = '[ SEND MESSAGE ]';
+          btn.style.borderColor = 'var(--green)';
+          btn.style.color = 'var(--green)';
+          btn.disabled = false;
+          status.textContent = '';
+        }, 4000);
+      } else {
+        throw new Error('Send failed');
+      }
+    } catch {
+      btn.textContent = '[ SEND MESSAGE ]';
+      btn.disabled = false;
+      status.style.color = 'var(--red)';
+      status.textContent = '[ TRANSMISSION FAILED — TRY AGAIN ]';
+    }
+  }
+
+  // Lightbox — only opens if frame has a real <img>, not a placeholder
+  // Lightbox — only opens if frame has a real <img>, not a placeholder
+  function openLightbox(frame) {
+    const img = frame.querySelector('img');
+    if (!img) return;
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    lbImg.src = img.src;
+    lbImg.alt = img.alt;
+    lb.classList.add('open');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>
